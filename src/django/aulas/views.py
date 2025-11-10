@@ -4,6 +4,11 @@ from datetime import date
 from django.template import Template,Context
 from django.template.loader import get_template
 from django.shortcuts import render
+from .models import Person,Musician,Album
+
+
+
+
 def hello(request):
     return HttpResponse("Hello, world!")
 
@@ -69,3 +74,17 @@ def cuarta_plantilla(request):
        "fecha_actual":date.today(),
        "dias_laborables": dias
       })
+
+def crear_musico(request,nombre,apellido,instrumento):
+
+    musico = Musician(first_name=nombre, last_name=apellido, instrument=instrumento)
+    musico.save()
+    mensaje = "Músico creado: %s %s con id %d" % (musico.first_name, musico.last_name, musico.id)
+    return HttpResponse(mensaje) 
+
+def crear_album(request, artista_id, nombre, estrellas,):
+    artista = Musician.objects.get(id=artista_id)
+    album = Album( name=nombre, release_date=date.today(), num_stars=estrellas, artist=artista)
+    album.save()
+    mensaje = "Álbum creado: %s por %s con id %d" % (album.name, artista.first_name + " " + artista.last_name, album.id)
+    return HttpResponse(mensaje)
